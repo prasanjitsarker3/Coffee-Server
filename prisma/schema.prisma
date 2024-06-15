@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  password String
+  role UserRole 
+  needPasswordChange Boolean @default(true)
+  status UserStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+  profile Profile?
+
+  @@map("users")
+
+}
+
+model Profile {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  profilePhoto String?
+  coverPhoto String?
+  address String?
+  isDeleted Boolean @default(false)
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+  user User @relation(fields: [email], references: [email])
+
+  @@map("profiles")
+}
+
+model Category{
+  id String @id @default(uuid())
+  name String
+  icon String
+  isDeleted Boolean @default(false)
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+  products    Product[]
+  @@map("categoryies")
+}
+
+model Product {
+  id            String         @id @default(uuid())
+  name          String
+  image         String      
+  description   String
+  price         Float
+  size          String[]    // Array of sizes available (e.g., ['250g', '500g'])
+  discount      Float?      // Optional discount percentage
+  discountPrice Float ?
+  buyPackage    Package     @default(Bag) // Type of packaging (e.g., 'box', 'bag', 'tin')
+  packageDate   DateTime    // Date when the product was packaged
+  location      String      // Location of origin or production
+  expiryDate    DateTime    // Expiry date of the product
+  sellCount     Int         @default(0) // Default sell count
+  isSpecial     Special     @default(Tea)     // Indicates if the product is special (tea or coffee)
+  isDelete      Boolean     @default(false) // Indicates if the product is marked for deletion
+  // Define relation to Category
+  categoryId      String      // Category of the product (e.g., 'tea', 'coffee')
+  category      Category    @relation(fields: [categoryId], references: [id])
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  @@map("products")
+}
+
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+  DELETED
+}
+enum UserRole {
+  SUPPER_ADMIN
+  ADMIN
+  USER
+} 
+
+//Product Enum
+enum Special {
+  Tea
+  Coffee
+}
+enum Package {
+  Box
+  Bag
+  Tin
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
