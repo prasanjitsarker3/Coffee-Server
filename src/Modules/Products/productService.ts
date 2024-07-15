@@ -156,10 +156,72 @@ const updatedProductIntoDB = async (id: string, payload: any) => {
   });
   return result;
 };
+
+const categoryProductFromDB = async (
+  id: string,
+  params: any,
+  options: IPaginationOptions
+) => {
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationCalculation(options);
+  const { searchTerm, ...filterData } = params;
+  const andCondition: Prisma.ProductWhereInput[] = [];
+
+  // Add search conditions
+  if (searchTerm) {
+    andCondition.push({
+      OR: petSearchingField.map((field) => ({
+        [field]: {
+          contains: searchTerm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+  // Add filter conditions
+  if (Object.keys(filterData).length > 0) {
+    andCondition.push({
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: {
+          equals: filterData[key],
+        },
+      })),
+    });
+  }
+
+  andCondition.push({
+    isDelete: false,
+    categoryId: id,
+  });
+  const whereCondition: Prisma.ProductWhereInput =
+    andCondition.length > 0 ? { AND: andCondition } : {};
+
+  // Fetch data from the database
+  const result = await prisma.product.findMany({
+    where: whereCondition,
+    skip,
+    take: limit,
+    orderBy:
+      sortBy && sortOrder ? { [sortBy]: sortOrder } : { createdAt: "asc" },
+  });
+
+  // Fetch the total count of records
+  const total = await prisma.product.count({ where: whereCondition });
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    result,
+  };
+};
+
 export const productService = {
   createProductDB,
   getAllProductFromDB,
   deleteProductFromDB,
   updatedProductIntoDB,
   singleProductFromDB,
+  categoryProductFromDB,
 };

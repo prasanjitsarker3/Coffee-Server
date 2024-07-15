@@ -53,13 +53,27 @@ const deleteProduct = catchAsync(async (req: Request, res: Response) => {
 
 const updatedProduct = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  console.log("Id", id);
-  console.log("Body", req.body);
   const result = await productService.updatedProductIntoDB(id, req.body);
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
     message: "Product Updated Successfully",
+    data: result,
+  });
+});
+const categoryProduct = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const filterData = pick(req.query, petFilterableFields);
+  const optionsData = pick(req.query, optionsPaginationFields);
+  const result = await productService.categoryProductFromDB(
+    id,
+    filterData,
+    optionsData
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Category Product Successfully",
     data: result,
   });
 });
@@ -70,4 +84,5 @@ export const productController = {
   singleProduct,
   deleteProduct,
   updatedProduct,
+  categoryProduct,
 };

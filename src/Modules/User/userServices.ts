@@ -137,9 +137,43 @@ const profileUpdateFromDB = async (
   return result;
 };
 
+const roleChangeUser = async (id: string, role: UserRole) => {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+  const result = await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: role,
+  });
+  return result;
+};
+
+const deleteUser = async (id: string) => {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+  const result = await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      status: UserStatus.DELETED,
+    },
+  });
+  return result;
+};
+
 export const userServices = {
   createAdminIntoDB,
   getAllUserFromDB,
   myProfileFromDB,
   profileUpdateFromDB,
+  roleChangeUser,
+  deleteUser,
 };

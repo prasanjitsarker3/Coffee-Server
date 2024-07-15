@@ -25,6 +25,8 @@ model User {
   createdAt DateTime @default(now())
   updateAt DateTime @updatedAt
   profile Profile?
+  orders             Order[]    @relation("UserOrders")
+
 
   @@map("users")
 
@@ -75,6 +77,7 @@ model Product {
   // Define relation to Category
   categoryId      String      // Category of the product (e.g., 'tea', 'coffee')
   category      Category    @relation(fields: [categoryId], references: [id])
+  orders        OrderProduct[] // Relation to OrderProduct model
 
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -82,6 +85,52 @@ model Product {
   @@map("products")
 }
 
+
+model Order {
+  id          String         @id @default(uuid())
+  address     String
+  contact     String
+  totalPrice  Float
+  userId      String
+  status      OrderStatus @default(INPROGRESS)
+  paymentStatus PaymentStatus @default(UNPAID)  //Ad Payment Status Method
+  transactionId String  @unique
+  isDelete      Boolean     @default(false)
+  user        User           @relation(fields: [userId], references: [id], name: "UserOrders")
+  products    OrderProduct[] // Relation to OrderProduct model
+  payment     Payment?       // Relation Payment Model 
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@map("orders")
+}
+
+model OrderProduct {
+  id         String    @id @default(uuid())
+  quantity   Int
+  size       String
+  orderId    String
+  productId  String
+  order      Order     @relation(fields: [orderId], references: [id])
+  product    Product   @relation(fields: [productId], references: [id])
+
+  @@unique([orderId, productId])
+  @@map("order_products")
+}
+
+model Payment {
+  id String @id @default(uuid())
+  orderId String @unique
+  order Order @relation(fields: [orderId], references: [id])
+  amount Float
+  pay    PaymentType   @default(CASH)
+  transactionId String? @unique
+  paymentGatewayData Json?
+  createdAt DateTime @default(now()) 
+  upadateAt DateTime @updatedAt
+
+  @@map("payments")
+}
 
 enum UserStatus {
   ACTIVE
@@ -109,4 +158,19 @@ enum RequestStatus {
   PENDING
   ACCEPTED
   REJECTED
+}
+
+enum OrderStatus {
+  INPROGRESS
+  COMFIRM
+  DELIVERY
+  CANCELED
+}
+enum PaymentStatus {
+   PAID
+   UNPAID
+}
+enum PaymentType {
+  CASH
+  ONLINE
 }

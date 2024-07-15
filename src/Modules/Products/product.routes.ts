@@ -29,5 +29,6 @@ router.patch(
   // validationRequest(productUpdatedValidationSchema),
   productController.updatedProduct
 );
+router.get("/category/:id", productController.categoryProduct);
 
 export const productRoute = router;

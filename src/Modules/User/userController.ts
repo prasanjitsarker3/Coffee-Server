@@ -52,10 +52,32 @@ const profileUpdate = catchAsync(
     });
   }
 );
+const roleChange = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await userServices.roleChangeUser(id, req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Role Update Successfully",
+    data: result,
+  });
+});
+const deleteUser = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await userServices.deleteUser(id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Delete Successfully",
+    data: result,
+  });
+});
 
 export const userController = {
   createAdmin,
   getAllUser,
   myProfile,
   profileUpdate,
+  roleChange,
+  deleteUser,
 };

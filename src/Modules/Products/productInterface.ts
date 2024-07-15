@@ -36,3 +36,20 @@ export type IProductUP = {
   categoryId?: string;
   category?: Category;
 };
+
+type P = {
+  userId: string;
+  totalPrice: number;
+  product: [
+    {
+      productId: string;
+      quantity: number;
+      size: string;
+    },
+    {
+      productId: string;
+      quantity: number;
+      size: string;
+    }
+  ];
+};
