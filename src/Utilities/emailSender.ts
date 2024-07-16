@@ -9,8 +9,6 @@ const emailSender = async (email: string, html: any) => {
     auth: {
       user: config.email,
       pass: config.appPassword,
-      //   user: "sarkerprasanjit379@gmail.coml",
-      //   pass: "aslp synq iaca abcm",
     },
     tls: {
       rejectUnauthorized: false,
