@@ -22,8 +22,6 @@ const emailSender = (email, html) => __awaiter(void 0, void 0, void 0, function*
         auth: {
             user: config_1.default.email,
             pass: config_1.default.appPassword,
-            //   user: "sarkerprasanjit379@gmail.coml",
-            //   pass: "aslp synq iaca abcm",
         },
         tls: {
             rejectUnauthorized: false,
