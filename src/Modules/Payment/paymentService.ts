@@ -1,10 +1,6 @@
 import { OrderStatus, PaymentStatus, PaymentType } from "@prisma/client";
 import prisma from "../../App/Common/Prisma";
 import { ICashPayment, generateUniqueId } from "./paymentInterface";
-import axios from "axios";
-import ApiError from "../../App/Error/ApiError";
-import httpStatus from "http-status";
-import config from "../../App/config";
 import { initialPayment, validatePayment } from "./sslContacts";
 
 const cashOnPayment = async (payload: ICashPayment) => {

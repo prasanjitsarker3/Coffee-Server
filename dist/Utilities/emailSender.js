@@ -33,6 +33,7 @@ const emailSender = (email, html) => __awaiter(void 0, void 0, void 0, function*
         subject: "Product Order",
         html,
     });
+    //Checking
     return info.messageId;
 });
 exports.default = emailSender;
