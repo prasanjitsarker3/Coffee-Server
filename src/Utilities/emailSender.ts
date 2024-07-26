@@ -21,6 +21,7 @@ const emailSender = async (email: string, html: any) => {
     subject: "Product Order",
     html,
   });
+  //Checking
   return info.messageId;
 };
 
